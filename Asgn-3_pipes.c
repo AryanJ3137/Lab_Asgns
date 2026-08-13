@@ -8,7 +8,7 @@
 int main() {
     int pipefd[2];
     pid_t pid;
-    char message[] = "Hello from parent!";
+    char message[100];
     char buffer[100];
 
 
@@ -25,20 +25,31 @@ int main() {
         return 1;
     }
 
+
     if (pid > 0) {
 
         close(pipefd[0]);  
 
 
+        printf("Enter a message: ");
+        fgets(message, sizeof(message), stdin);
+
+
+        message[strcspn(message, "\n")] = '\0';
+
+
         write(pipefd[1], message, strlen(message) + 1);
 
-        close(pipefd[1]);  
-        wait(NULL);        
+        close(pipefd[1]); 
+
+
+        wait(NULL);
     }
+
+
     else {
 
         close(pipefd[1]);  
-
 
         read(pipefd[0], buffer, sizeof(buffer));
 
